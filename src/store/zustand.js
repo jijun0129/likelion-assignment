@@ -1,21 +1,29 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-const usePeopleStore = create((set) => ({
-  people: [],
-  setPeople: (people) => set({ people }),
-  addPerson: (person) => set((state) => ({ people: [...state.people, person] })),
-  plusHeart: (id) =>
-    set((state) => ({
-      people: state.people.map((person) =>
-        person.id === id ? { ...person, heart: !person.heart, heartCount: person.heartCount + 1 } : person
-      ),
-    })),
-  minusHeart: (id) =>
-    set((state) => ({
-      people: state.people.map((person) =>
-        person.id === id ? { ...person, heart: !person.heart, heartCount: person.heartCount - 1 } : person
-      ),
-    })),
-}));
+const usePeopleStore = create(
+  persist(
+    (set) => ({
+      people: [],
+      setPeople: (people) => set({ people }),
+      addPerson: (person) => set((state) => ({ people: [...state.people, person] })),
+      toggleHeart: (id) =>
+        set((state) => ({
+          people: state.people.map((person) => {
+            if (person.id !== id) return person;
+            const isHearted = person.heart;
+            return {
+              ...person,
+              heart: !isHearted,
+              heartCount: isHearted ? person.heartCount - 1 : person.heartCount + 1,
+            };
+          }),
+        })),
+    }),
+    {
+      name: "people-storage",
+    }
+  )
+);
 
 export default usePeopleStore;

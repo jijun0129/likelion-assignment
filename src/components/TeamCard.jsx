@@ -70,28 +70,23 @@ const TagP = styled.p`
 `;
 
 const TeamCard = ({ person }) => {
-  const plusHeart = usePeopleStore((state) => state.plusHeart);
-  const minusHeart = usePeopleStore((state) => state.minusHeart);
+  const toggleHeart = usePeopleStore((state) => state.toggleHeart);
 
   const handleCardClick = () => {
     console.log("Card clicked");
     // ♡
   };
 
-  const handleHeartClick = (e, person) => {
+  const handleHeartClick = (e, id) => {
     e.stopPropagation();
-    if (person.heart) {
-      minusHeart(person.id);
-    } else {
-      plusHeart(person.id);
-    }
+    toggleHeart(id);
   };
 
   return (
     <CardDiv onClick={handleCardClick}>
       <HeartDiv>
         <HeartCount>{person.heartCount}</HeartCount>
-        <Heart onClick={(e) => handleHeartClick(e, person)}>{person.heart ? "♥" : "♡"}</Heart>
+        <Heart onClick={(e) => handleHeartClick(e, person.id)}>{person.heart ? "♥" : "♡"}</Heart>
       </HeartDiv>
       <NameP>{person.name}</NameP>
       <PositionP>{person.position}</PositionP>

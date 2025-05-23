@@ -11,10 +11,12 @@ const ContainerDiv = styled.div`
   gap: 20px;
   align-items: center;
 `;
+
 const TitleH1 = styled.h1`
   font-size: 24px;
   color: white;
 `;
+
 const ListDiv = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -30,8 +32,10 @@ const Home = () => {
   const setPeople = usePeopleStore((state) => state.setPeople);
 
   useEffect(() => {
-    setPeople(mockData);
-  }, [setPeople]);
+    if (people.length === 0) {
+      setPeople(mockData);
+    }
+  }, [people.length, setPeople]);
 
   return (
     <ContainerDiv>
