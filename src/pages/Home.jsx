@@ -1,10 +1,13 @@
 import styled from "styled-components";
 import { mockData } from "../data/mock_data";
 import TeamCard from "../components/TeamCard.jsx";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import usePeopleStore from "../store/zustand.js";
 import TeamModal from "../components/TeamModal.jsx";
 import AddForm from "../components/AddForm.jsx";
+import { ThemeContext } from "../context/ThemeContext.js";
+import darkMode from "../assets/dark_mode.png";
+import lightMode from "../assets/light_mode.png";
 
 const ContainerDiv = styled.div`
   display: flex;
@@ -15,7 +18,6 @@ const ContainerDiv = styled.div`
 
 const TitleH1 = styled.h1`
   font-size: 24px;
-  color: white;
 `;
 
 const ListDiv = styled.div`
@@ -26,11 +28,33 @@ const ListDiv = styled.div`
   margin: 0 auto;
 `;
 
+const ThemeButton = styled.button`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 15px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const Img = styled.img`
+  width: 30px;
+  height: 30px;
+`;
+
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(null);
   const people = usePeopleStore((state) => state.people);
   const setPeople = usePeopleStore((state) => state.setPeople);
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
 
   const toggleModal = (person) => {
     setIsModalOpen(!isModalOpen);
@@ -40,6 +64,10 @@ const Home = () => {
   const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedPerson(null);
+  };
+
+  const handleThemeToggle = () => {
+    toggleTheme();
   };
 
   useEffect(() => {
@@ -58,6 +86,9 @@ const Home = () => {
       </ListDiv>
       <TitleH1>팀원 추가</TitleH1>
       <AddForm />
+      <ThemeButton onClick={handleThemeToggle}>
+        <Img src={isDarkMode ? darkMode : lightMode}></Img>
+      </ThemeButton>
       {isModalOpen && <TeamModal handleModalClose={handleModalClose} selectedPerson={selectedPerson} />}
     </ContainerDiv>
   );
