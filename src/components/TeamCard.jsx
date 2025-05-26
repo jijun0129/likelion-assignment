@@ -22,7 +22,7 @@ const HeartDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  top: 10px;
+  top: 5px;
   right: 10px;
 `;
 const Heart = styled.div`
@@ -69,13 +69,8 @@ const TagP = styled.p`
   margin: 5px 0;
 `;
 
-const TeamCard = ({ person }) => {
+const TeamCard = ({ person, onClick }) => {
   const toggleHeart = usePeopleStore((state) => state.toggleHeart);
-
-  const handleCardClick = () => {
-    console.log("Card clicked");
-    // ♡
-  };
 
   const handleHeartClick = (e, id) => {
     e.stopPropagation();
@@ -83,7 +78,7 @@ const TeamCard = ({ person }) => {
   };
 
   return (
-    <CardDiv onClick={handleCardClick}>
+    <CardDiv onClick={onClick}>
       <HeartDiv>
         <HeartCount>{person.heartCount}</HeartCount>
         <Heart onClick={(e) => handleHeartClick(e, person.id)}>{person.heart ? "♥" : "♡"}</Heart>
