@@ -6,7 +6,6 @@ const usePeopleStore = create(
     (set) => ({
       people: [],
       setPeople: (people) => set({ people }),
-      addPerson: (person) => set((state) => ({ people: [...state.people, person] })),
       toggleHeart: (id) =>
         set((state) => ({
           people: state.people.map((person) => {
