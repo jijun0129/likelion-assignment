@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { mockData } from "../data/mock_data";
 import TeamCard from "../components/TeamCard.jsx";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import usePeopleStore from "../store/zustand.js";
 import TeamModal from "../components/TeamModal.jsx";
 import AddForm from "../components/AddForm.jsx";
@@ -72,12 +72,6 @@ const Home = () => {
     toggleTheme();
   };
 
-  useEffect(() => {
-    if (people.length === 0) {
-      setPeople(mockData);
-    }
-  }, [people.length, setPeople]);
-
   const {
     data: users,
     isPending,
@@ -87,13 +81,22 @@ const Home = () => {
     queryFn: fetchUsers,
   });
 
-  const fiveUsers = users ? users.slice(0, 5) : [];
-  fiveUsers.forEach((user) => {
-    user.position = " frontend";
-    user.tag = ["react", "javascript", "css"];
-    user.heart = false;
-    user.heartCount = 0;
-  });
+  const fiveUsers = useMemo(() => {
+    if (!users) return [];
+    return users.slice(0, 5).map((user) => ({
+      ...user,
+      position: "frontend",
+      tag: ["react", "javascript", "css"],
+      heart: false,
+      heartCount: 0,
+    }));
+  }, [users]);
+
+  useEffect(() => {
+    if (people.length === 0 && fiveUsers.length > 0) {
+      setPeople([...mockData, ...fiveUsers]);
+    }
+  }, [people.length, setPeople, fiveUsers]);
 
   if (isPending) {
     return <h2>Loading...</h2>;
@@ -106,9 +109,6 @@ const Home = () => {
     <ContainerDiv>
       <TitleH1>팀원 프로필</TitleH1>
       <ListDiv>
-        {fiveUsers.map((user) => {
-          return <TeamCard key={user.id} person={user} onClick={() => toggleModal(user)} />;
-        })}
         {people.map((person) => {
           return <TeamCard key={person.id} person={person} onClick={() => toggleModal(person)} />;
         })}
