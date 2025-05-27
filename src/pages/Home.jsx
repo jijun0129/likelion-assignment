@@ -8,6 +8,8 @@ import AddForm from "../components/AddForm.jsx";
 import { ThemeContext } from "../context/ThemeContext.js";
 import darkMode from "../assets/dark_mode.png";
 import lightMode from "../assets/light_mode.png";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUsers } from "../api/jsonplaceholder.js";
 
 const ContainerDiv = styled.div`
   display: flex;
@@ -76,10 +78,37 @@ const Home = () => {
     }
   }, [people.length, setPeople]);
 
+  const {
+    data: users,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: fetchUsers,
+  });
+
+  const fiveUsers = users ? users.slice(0, 5) : [];
+  fiveUsers.forEach((user) => {
+    user.position = " frontend";
+    user.tag = ["react", "javascript", "css"];
+    user.heart = false;
+    user.heartCount = 0;
+  });
+
+  if (isPending) {
+    return <h2>Loading...</h2>;
+  }
+  if (isError) {
+    return <h2>Error fetching posts</h2>;
+  }
+
   return (
     <ContainerDiv>
       <TitleH1>팀원 프로필</TitleH1>
       <ListDiv>
+        {fiveUsers.map((user) => {
+          return <TeamCard key={user.id} person={user} onClick={() => toggleModal(user)} />;
+        })}
         {people.map((person) => {
           return <TeamCard key={person.id} person={person} onClick={() => toggleModal(person)} />;
         })}

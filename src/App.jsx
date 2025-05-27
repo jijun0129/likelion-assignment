@@ -6,6 +6,9 @@ import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./global";
 import { ThemeContext } from "./context/ThemeContext";
 import useDarkmode from "./hooks/useDarkmode";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
   const [isDarkMode, toggleTheme] = useDarkmode();
@@ -13,7 +16,9 @@ function App() {
   return (
     <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
       <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-        <Home />
+        <QueryClientProvider client={queryClient}>
+          <Home />
+        </QueryClientProvider>
         <GlobalStyles />
       </ThemeContext.Provider>
     </ThemeProvider>
